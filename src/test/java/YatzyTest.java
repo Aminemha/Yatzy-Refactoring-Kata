@@ -1,110 +1,226 @@
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+import java.util.stream.Stream;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class YatzyTest {
+  public static Stream<Arguments> chanceInput() {
+    return Stream.of(
+        arguments(new Yatzy(2, 3, 4, 5, 1), 15), arguments(new Yatzy(3, 3, 4, 5, 1), 16));
+  }
 
-    @Test
-    public void chance_scores_sum_of_all_dice() {
-        int expected = 15;
-        int actual = Yatzy.chance(2,3,4,5,1);
-        assertEquals(expected, actual);
-        assertEquals(16, Yatzy.chance(3,3,4,5,1));
-    }
+  public static Stream<Arguments> yatzyInput() {
+    return Stream.of(
+        arguments(new Yatzy(4, 4, 4, 4, 4), 50),
+        arguments(new Yatzy(6, 6, 6, 6, 6), 50),
+        arguments(new Yatzy(6, 6, 6, 6, 3), 0));
+  }
 
-    @Test public void yatzy_scores_50() {
-        int expected = 50;
-        int actual = Yatzy.yatzy(4,4,4,4,4);
-        assertEquals(expected, actual);
-        assertEquals(50, Yatzy.yatzy(6,6,6,6,6));
-        assertEquals(0, Yatzy.yatzy(6,6,6,6,3));
-    }
+  public static Stream<Arguments> onesInput() {
+    return Stream.of(
+        arguments(new Yatzy(1, 2, 3, 4, 5), 1),
+        arguments(new Yatzy(1, 2, 1, 4, 5), 2),
+        arguments(new Yatzy(6, 2, 2, 4, 5), 0),
+        arguments(new Yatzy(1, 2, 1, 1, 1), 4));
+  }
 
-    @Test public void test_1s() {
-        assertTrue(Yatzy.ones(1,2,3,4,5) == 1);
-        assertEquals(2, Yatzy.ones(1,2,1,4,5));
-        assertEquals(0, Yatzy.ones(6,2,2,4,5));
-        assertEquals(4, Yatzy.ones(1,2,1,1,1));
-    }
+  public static Stream<Arguments> twosInput() {
+    return Stream.of(
+        arguments(new Yatzy(1, 2, 3, 2, 6), 4), arguments(new Yatzy(2, 2, 2, 2, 2), 10));
+  }
 
-    @Test
-    public void test_2s() {
-        assertEquals(4, Yatzy.twos(1,2,3,2,6));
-        assertEquals(10, Yatzy.twos(2,2,2,2,2));
-    }
+  public static Stream<Arguments> threesInput() {
+    return Stream.of(
+        arguments(new Yatzy(1, 2, 3, 2, 3), 6), arguments(new Yatzy(2, 3, 3, 3, 3), 12));
+  }
 
-    @Test
-    public void test_threes() {
-        assertEquals(6, Yatzy.threes(1,2,3,2,3));
-        assertEquals(12, Yatzy.threes(2,3,3,3,3));
-    }
+  public static Stream<Arguments> foursInput() {
+    return Stream.of(
+        arguments(new Yatzy(4, 4, 4, 5, 5), 12),
+        arguments(new Yatzy(4, 4, 5, 5, 5), 8),
+        arguments(new Yatzy(4, 5, 5, 5, 5), 4));
+  }
 
-    @Test
-    public void fours_test() 
-    {
-        assertEquals(12, new Yatzy(4,4,4,5,5).fours());
-        assertEquals(8, new Yatzy(4,4,5,5,5).fours());
-        assertEquals(4, new Yatzy(4,5,5,5,5).fours());
-    }
+  public static Stream<Arguments> fivesInput() {
+    return Stream.of(
+        arguments(new Yatzy(4, 4, 4, 5, 5), 10),
+        arguments(new Yatzy(4, 4, 5, 5, 5), 15),
+        arguments(new Yatzy(4, 5, 5, 5, 5), 20));
+  }
 
-    @Test
-    public void fives() {
-        assertEquals(10, new Yatzy(4,4,4,5,5).fives());
-        assertEquals(15, new Yatzy(4,4,5,5,5).fives());
-        assertEquals(20, new Yatzy(4,5,5,5,5).fives());
-    }
+  public static Stream<Arguments> sixesInput() {
+    return Stream.of(
+        arguments(new Yatzy(4, 4, 4, 5, 5), 0),
+        arguments(new Yatzy(4, 4, 6, 5, 5), 6),
+        arguments(new Yatzy(6, 5, 6, 6, 5), 18));
+  }
 
-    @Test
-    public void sixes_test() {
-        assertEquals(0, new Yatzy(4,4,4,5,5).sixes());
-        assertEquals(6, new Yatzy(4,4,6,5,5).sixes());
-        assertEquals(18, new Yatzy(6,5,6,6,5).sixes());
-    }
+  public static Stream<Arguments> pairInput() {
+    return Stream.of(
+        arguments(new Yatzy(3, 4, 3, 5, 6), 6),
+        arguments(new Yatzy(5, 3, 3, 3, 5), 10),
+        arguments(new Yatzy(5, 3, 6, 6, 5), 12),
+        arguments(new Yatzy(2, 3, 6, 1, 5), 0));
+  }
 
-    @Test
-    public void one_pair() {
-        assertEquals(6, Yatzy.score_pair(3,4,3,5,6));
-        assertEquals(10, Yatzy.score_pair(5,3,3,3,5));
-        assertEquals(12, Yatzy.score_pair(5,3,6,6,5));
-    }
+  public static Stream<Arguments> twoPairInput() {
+    return Stream.of(
+        arguments(new Yatzy(3, 3, 5, 4, 5), 16), arguments(new Yatzy(3, 3, 5, 5, 5), 16));
+  }
 
-    @Test
-    public void two_Pair() {
-        assertEquals(16, Yatzy.two_pair(3,3,5,4,5));
-        assertEquals(16, Yatzy.two_pair(3,3,5,5,5));
-    }
+  public static Stream<Arguments> threeOfAKindInput() {
+    return Stream.of(
+        arguments(new Yatzy(3, 3, 3, 4, 5), 9),
+        arguments(new Yatzy(5, 3, 5, 4, 5), 15),
+        arguments(new Yatzy(3, 3, 3, 3, 5), 9),
+        arguments(new Yatzy(3, 3, 3, 3, 3), 9));
+  }
 
-    @Test
-    public void three_of_a_kind() 
-    {
-        assertEquals(9, Yatzy.three_of_a_kind(3,3,3,4,5));
-        assertEquals(15, Yatzy.three_of_a_kind(5,3,5,4,5));
-        assertEquals(9, Yatzy.three_of_a_kind(3,3,3,3,5));
-    }
+  public static Stream<Arguments> fourOfAKindInput() {
+    return Stream.of(
+        arguments(new Yatzy(3, 3, 3, 3, 5), 12), arguments(new Yatzy(5, 5, 5, 4, 5), 20));
+  }
 
-    @Test
-    public void four_of_a_knd() {
-        assertEquals(12, Yatzy.four_of_a_kind(3,3,3,3,5));
-        assertEquals(20, Yatzy.four_of_a_kind(5,5,5,4,5));
-        assertEquals(9, Yatzy.three_of_a_kind(3,3,3,3,3));
-    }
+  public static Stream<Arguments> smallStraightInput() {
+    return Stream.of(
+        arguments(new Yatzy(1, 2, 3, 4, 5), 15),
+        arguments(new Yatzy(2, 3, 4, 5, 1), 15),
+        arguments(new Yatzy(1, 2, 2, 4, 5), 0));
+  }
 
-    @Test
-    public void smallStraight() {
-        assertEquals(15, Yatzy.smallStraight(1,2,3,4,5));
-        assertEquals(15, Yatzy.smallStraight(2,3,4,5,1));
-        assertEquals(0, Yatzy.smallStraight(1,2,2,4,5));
-    }
+  public static Stream<Arguments> largeStraightInput() {
+    return Stream.of(
+        arguments(new Yatzy(6, 2, 3, 4, 5), 20),
+        arguments(new Yatzy(2, 3, 4, 5, 6), 20),
+        arguments(new Yatzy(1, 2, 2, 4, 5), 0));
+  }
 
-    @Test
-    public void largeStraight() {
-        assertEquals(20, Yatzy.largeStraight(6,2,3,4,5));
-        assertEquals(20, Yatzy.largeStraight(2,3,4,5,6));
-        assertEquals(0, Yatzy.largeStraight(1,2,2,4,5));
-    }
+  public static Stream<Arguments> fullHouseInput() {
+    return Stream.of(
+        arguments(new Yatzy(6, 2, 2, 2, 6), 18),
+        arguments(new Yatzy(1, 1, 1, 5, 5), 13),
+        arguments(new Yatzy(1, 2, 2, 2, 1), 8),
+        arguments(new Yatzy(4, 6, 4, 6, 4), 24),
+        arguments(new Yatzy(2, 3, 4, 5, 6), 0)
+    );
+  }
 
-    @Test
-    public void fullHouse() {
-        assertEquals(18, Yatzy.fullHouse(6,2,2,2,6));
-        assertEquals(0, Yatzy.fullHouse(2,3,4,5,6));
-    }
+  @Test()
+  @DisplayName("Should throws an IllegalArgumentException with invalid dice value")
+  public void testInvalidDiceValue() {
+    IllegalArgumentException exception =
+        assertThrows(IllegalArgumentException.class, () -> new Yatzy(1, 2, 3, 7, 5));
+    assertEquals("Dice value must be between 1 and 6.", exception.getMessage());
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return chance scores sum of all dice")
+  @MethodSource("chanceInput")
+  public void testCalculateChance(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.calculateChance());
+  }
+
+  @ParameterizedTest
+  @DisplayName("Should return if it's a Yatzy score")
+  @MethodSource("yatzyInput")
+  public void testCalculateYatzy(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.calculateYatzy());
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the sum of ones")
+  @MethodSource("onesInput")
+  public void testCalculateScoreForValueOnes(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.calculateScoreForValue(1));
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the sum of twos")
+  @MethodSource("twosInput")
+  public void testCalculateScoreForValueTwos(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.calculateScoreForValue(2));
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the sum of threes")
+  @MethodSource("threesInput")
+  public void testCalculateScoreForValueThrees(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.calculateScoreForValue(3));
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the sum of fours")
+  @MethodSource("foursInput")
+  public void testCalculateScoreForValueFours(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.calculateScoreForValue(4));
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the sum of fives")
+  @MethodSource("fivesInput")
+  public void testCalculateScoreForValueFives(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.calculateScoreForValue(5));
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the sum of sixes")
+  @MethodSource("sixesInput")
+  public void testCSalculateScoreForValueSixes(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.calculateScoreForValue(6));
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the score of the highest pair")
+  @MethodSource("pairInput")
+  public void testScorePair(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.scorePair());
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the score of two pairs")
+  @MethodSource("twoPairInput")
+  public void testTwoPair(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.twoPair());
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the score of three of a kind")
+  @MethodSource("threeOfAKindInput")
+  public void testThreeOfAKind(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.threeOfAKind());
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the score of four of a kind")
+  @MethodSource("fourOfAKindInput")
+  public void testFourOfAKind(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.fourOfAKind());
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the score of a small straight")
+  @MethodSource("smallStraightInput")
+  public void testSmallStraight(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.smallStraight());
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the score of a large straight")
+  @MethodSource("largeStraightInput")
+  public void testLargeStraight(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.largeStraight());
+  }
+
+  @ParameterizedTest()
+  @DisplayName("Should return the score of a full house")
+  @MethodSource("fullHouseInput")
+  public void testFullHouse(Yatzy yatzy, int expected) {
+    assertEquals(expected, yatzy.fullHouse());
+  }
 }
